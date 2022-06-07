@@ -4,7 +4,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Friends</h1>
+            <h1>Find Friends</h1>
           </div>
         </div>
       </div>
@@ -14,7 +14,8 @@
       <div class="card card-solid">
         <div class="card-body pb-0">
           <div class="row">
-            <div class="col-12 col-sm-6 col-md-3 d-flex align-items-stretch flex-column" v-for="friend in friends" :key="friend.id">
+            <div class="col-12 col-sm-6 col-md-3 d-flex align-items-stretch flex-column" v-for="friend in friends"
+                 :key="friend.id">
               <div class="card bg-light d-flex flex-fill">
                 <div class="card-header text-muted border-bottom-0 text-center">
                   <h2 class="lead"><b><h4>{{ friend.name }}</h4></b></h2>
@@ -22,8 +23,10 @@
                 <div class="card-body pt-0">
                   <div class="row">
                     <div class="col-12 text-center">
-                      <img v-if="friend.profile_image" :src="friend.profile_image" :alt="friend.name" class="img-circle img-fluid" height="128" width="128" />
-                      <img v-else :src="defaultImage" alt="no-image-available" class="img-circle img-fluid" height="128" width="128" />
+                      <img v-if="friend.profile_image" :src="friend.profile_image" :alt="friend.name"
+                           class="img-circle img-fluid" height="128" width="128"/>
+                      <img v-else :src="defaultImage" alt="no-image-available" class="img-circle img-fluid" height="128"
+                           width="128"/>
                     </div>
                   </div>
                 </div>
@@ -55,6 +58,9 @@
 <script>
 import FriendService from '@/services/friend.service'
 import image from '@/assets/no-image-available.jpg'
+import {createToaster} from "@meforma/vue-toaster"
+
+const toaster = createToaster({ /* options */})
 export default {
   name: 'FindFriends',
   data() {
@@ -68,36 +74,38 @@ export default {
     }
   },
   methods: {
-    async addFriend(friend_id){
-      const data = { user_id: localStorage.id, friend_id: friend_id };
+    async addFriend(friend_id) {
+      const data = {user_id: localStorage.id, friend_id: friend_id};
       await FriendService.create(data).then((response) => {
         this.friends = response.data.users
       }).catch((error) => {
-        console.log(error.response.data);
+        this.message = (error.response && error.response.data && error.response.data.message) || error.message;
+        toaster.show(this.message);
       })
     },
 
     async loadFindFriends() {
       await FriendService.findFriends().then((response) => {
         this.friends = response.data.users.data
-        if(response.data.users.current_page < response.data.users.last_page) {
+        if (response.data.users.current_page < response.data.users.last_page) {
           this.moreExist = true
           this.nextPage = response.data.users.current_page + 1
-        }else{
+        } else {
           this.moreExist = false
         }
 
       }).catch((error) => {
-        console.log(error.response.data.users);
+        this.message = (error.response && error.response.data && error.response.data.message) || error.message;
+        toaster.show(this.message);
       })
     },
 
     async loadMore() {
       await FriendService.loadMoreFindFriends(this.nextPage).then((response) => {
-        if(response.data.users.current_page < response.data.users.last_page) {
+        if (response.data.users.current_page < response.data.users.last_page) {
           this.moreExist = true
           this.nextPage = response.data.users.current_page + 1
-        }else{
+        } else {
           this.moreExist = false
         }
 
@@ -106,7 +114,8 @@ export default {
         });
 
       }).catch((error) => {
-        console.log(error);
+        this.message = (error.response && error.response.data && error.response.data.message) || error.message;
+        toaster.show(this.message);
       })
     },
   },

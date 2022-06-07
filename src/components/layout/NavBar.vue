@@ -16,7 +16,7 @@
             <i class="fas fa-user mr-2"></i> See your profile
           </router-link>
           <div class="dropdown-divider"></div>
-          <Logout />
+          <Logout/>
         </div>
       </li>
     </ul>
@@ -24,11 +24,12 @@
 </template>
 
 <script>
-  import Logout from "@/components/account/Logout";
-  export default {
-    name: 'nav-bar',
-    components: {
-      Logout,
-    },
-  }
+import Logout from "@/components/account/Logout";
+
+export default {
+  name: 'nav-bar',
+  components: {
+    Logout,
+  },
+}
 </script>

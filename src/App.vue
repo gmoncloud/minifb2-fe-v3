@@ -1,5 +1,5 @@
 <template>
-  <MainApp />
+  <MainApp/>
 </template>
 
 <script>

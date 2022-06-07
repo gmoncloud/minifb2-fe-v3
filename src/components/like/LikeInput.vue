@@ -8,6 +8,9 @@
 
 <script>
 import LikeService from "@/services/like.service";
+import {createToaster} from "@meforma/vue-toaster"
+
+const toaster = createToaster({ /* options */})
 export default {
   name: 'LikeInput',
   data() {
@@ -19,14 +22,16 @@ export default {
       }
     }
   },
-  methods:  {
+  methods: {
     async doLike() {
       const data = this.like;
       await LikeService.likePost(data).then((response) => {
-        this.$emit('loadPosts');
-        console.log(response.data)
+        if(response.data){
+          this.$emit('loadPosts')
+        }
       }).catch((error) => {
-        console.log(error);
+        this.message = (error.response && error.response.data && error.response.data.message) || error.message
+        toaster.show(this.message)
       })
     },
   },

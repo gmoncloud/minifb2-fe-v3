@@ -6,6 +6,7 @@
             v-if="profile.profile_image"
             :src="profile.profile_image"
             :alt="profile.display_name"
+            class="img-circle elevation-2"
             height="150"
             width="150"
         />
@@ -65,48 +66,58 @@
             <h5 class="modal-title" id="postModalLabel">Edit Profile</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
           </div>
-              <main class="form-post">
-                <div class="card mb-4">
-                  <div class="card-body">
+          <main class="form-post">
+            <div class="card mb-4">
+              <div class="card-body">
 
-                    <div class="form-group">
-                      <div>
-                        <label for="exampleInputEmail1">Profile Image</label>
-                      </div>
-                      <img v-if="profile.profile_image" :src="profile.profile_image" :alt="profile.display_name" height="150" width="150" />
-                      <img v-else :src="defaultImage" alt="no-image-available" height="150" width="150" />
-                      <input type="file" class="form-control" @change="onChange">
+                <div class="form-group">
+                  <div>
+                    <label for="exampleInputEmail1">Profile Image</label>
+                  </div>
+                  <img v-if="profile.profile_image" :src="profile.profile_image" :alt="profile.display_name"
+                       height="150" width="150"/>
+                  <img v-else :src="defaultImage" alt="no-image-available" height="150" width="150"/>
+                  <input type="file" class="form-control" @change="onChange">
 
-                      <div class="alert alert-danger" role="alert" v-if="errors && errors.profile_image">
-                        {{ errors.profile_image[0] }}
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label for="exampleInputEmail1">Display Name</label>
-                      <input type="text" v-model="profile.display_name" class="form-control" id="display-name" placeholder="Display Name">
-                    </div>
-                    <div class="form-group">
-                      <label for="exampleInputEmail1">Education</label>
-                      <input type="text" v-model="profile.education" class="form-control" id="education" placeholder="Education">
-                    </div>
-                    <div class="form-group">
-                      <label for="exampleInputEmail1">Current City</label>
-                      <input type="text" v-model="profile.current_city" class="form-control" id="current-city" placeholder="Current City">
-                    </div>
-                    <div class="form-group">
-                      <label for="exampleInputEmail1">Hometown</label>
-                      <input type="text" v-model="profile.hometown" class="form-control" id="hometown" placeholder="Hometown">
-                    </div>
-                    <div class="form-group">
-                      <label for="exampleInputEmail1">Work</label>
-                      <input type="text" v-model="profile.work" class="form-control" id="work" placeholder="Work">
-                    </div>
+                  <div class="alert alert-danger" role="alert" v-if="errors && errors.profile_image">
+                    {{ errors.profile_image[0] }}
                   </div>
                 </div>
-              </main>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Display Name</label>
+                  <input type="text" v-model="profile.display_name" name="display_name" class="form-control" id="display-name"
+                         placeholder="Display Name">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Education</label>
+                  <input type="text" v-model="profile.education" name="education" class="form-control" id="education"
+                         placeholder="Education">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Current City</label>
+                  <input type="text" v-model="profile.current_city" name="curent_city" class="form-control" id="current-city"
+                         placeholder="Current City">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Hometown</label>
+                  <input type="text" v-model="profile.hometown" name="hometown" class="form-control" id="hometown"
+                         placeholder="Hometown">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Work</label>
+                  <input type="text" v-model="profile.work" name="work" class="form-control" id="work" placeholder="Work">
+                </div>
+              </div>
+            </div>
+          </main>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary" @click="updatePost(postDetail.id)">Save changes</button>
+            <button
+                type="button"
+                ref="closeProfile"
+                class="btn btn-secondary"
+                data-dismiss="modal">Close
+            </button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
           </div>
         </div>
       </form>
@@ -116,89 +127,98 @@
 </template>
 
 <script>
-  import ProfileService from '@/services/profile.service'
-  import UserService from '@/services/user.service'
-  import image from '@/assets/no-image-available.jpg'
-  export default {
-    name: 'profile-component',
-    data() {
-      return {
-        defaultImage: image,
-        avatar: '',
-        isLoggedIn: false,
-        displayName: '',
-        errors: {},
-        errorMessage: '',
-        file: '',
-        user_id: localStorage.id,
-          profile: {
-            display_name: '',
-            profile_image: '',
-            education: '',
-            current_city: '',
-            hometown: '',
-            work: '',
-            _method: 'PUT'
-          }
-        }
-    },
-    methods: {
-      onChange(e) {
-        this.file = e.target.files[0];
-        console.log(this.file)
-      },
-      async updateProfile() {
-        const userID = this.user_id;
-        this.success = false;
+import ProfileService from '@/services/profile.service'
+import UserService from '@/services/user.service'
+import image from '@/assets/no-image-available.jpg'
+import {createToaster} from "@meforma/vue-toaster"
 
-        let data = new FormData()
-        data.append('display_name', this.profile.display_name);
-        data.append('profile_image', this.file);
-        data.append('education', this.profile.education);
-        data.append('current_city', this.profile.current_city);
-        data.append('hometown', this.profile.hometown);
-        data.append('work', this.profile.work);
-        data.append('_method', 'PUT');
-
-        await ProfileService.update(userID, data).then((response) => {
-          this.profile = response.data.profile;
-          this.success = true;
-        }).catch((err) => {
-          if (err.response.status == 422) {
-              this.errors = err.response.data.errors;
-          }
-          console.log(err.response.data);
-        })
-
-      },
-      async loadProfile() {
-        await ProfileService.getAll().then((response) => {
-          this.profile = response.data.profile
-        }).catch((error) => {
-          console.log(error.response.data);
-        })
-      },
-      checkIsLoggedIn(){
-        this.isLoggedIn =  localStorage.id ? true : false
-      },
-      getDisplayName() {
-        ProfileService.getAll().then((response) => {
-          this.displayName = response.data.profile.display_name;
-
-          if(!response.data.profile.display_name){
-            this.displayName = localStorage.username;
-          }
-
-        }).catch((error) => {
-          console.log(error);
-        });
-      },
-    },
-    mounted() {
-      this.getDisplayName();
-      this.avatar = UserService.getAvatar();
-      this.loadProfile();
-      this.checkIsLoggedIn();
+const toaster = createToaster({ /* options */})
+export default {
+  name: 'profile-component',
+  data() {
+    return {
+      defaultImage: image,
+      avatar: '',
+      isLoggedIn: false,
+      displayName: '',
+      errors: {},
+      errorMessage: '',
+      file: '',
+      user_id: localStorage.id,
+      profile: {
+        display_name: '',
+        profile_image: '',
+        education: '',
+        current_city: '',
+        hometown: '',
+        work: '',
+        _method: 'PUT'
+      }
     }
+  },
+  methods: {
+    onChange(e) {
+      this.file = e.target.files[0];
+    },
+    async updateProfile() {
+      const userID = this.user_id;
+      this.success = false;
+
+      let data = new FormData()
+      data.append('display_name', this.profile.display_name);
+      data.append('profile_image', this.file);
+      data.append('education', this.profile.education);
+      data.append('current_city', this.profile.current_city);
+      data.append('hometown', this.profile.hometown);
+      data.append('work', this.profile.work);
+      data.append('_method', 'PUT');
+
+      await ProfileService.update(userID, data).then((response) => {
+        if (response.data.profile) {
+          this.$refs.closeProfile.click();
+          this.loadProfile()
+        }
+
+      }).catch((error) => {
+        if (error.response.status == 422) {
+          this.errors = error.response.data.errors;
+        }
+
+        this.message = (error.response && error.response.data && error.response.data.message) || error.message;
+        toaster.show(this.message);
+      })
+
+    },
+    async loadProfile() {
+      await ProfileService.getAll().then((response) => {
+        this.profile = response.data.profile
+      }).catch((error) => {
+        this.message = (error.response && error.response.data && error.response.data.message) || error.message;
+        toaster.show(this.message);
+      })
+    },
+    checkIsLoggedIn() {
+      this.isLoggedIn = localStorage.id ? true : false
+    },
+    getDisplayName() {
+      ProfileService.getAll().then((response) => {
+        this.displayName = response.data.profile.display_name;
+
+        if (response.data.profile.display_name == null) {
+          this.displayName = localStorage.username;
+        }
+
+      }).catch((error) => {
+        this.message = (error.response && error.response.data && error.response.data.message) || error.message;
+        toaster.show(this.message);
+      });
+    },
+  },
+  mounted() {
+    this.getDisplayName();
+    this.avatar = UserService.getAvatar();
+    this.loadProfile();
+    this.checkIsLoggedIn();
   }
+}
 </script>

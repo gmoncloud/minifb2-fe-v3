@@ -3,11 +3,7 @@
 </template>
 
 <script>
-  export default {
-    name: 'main-app'
-  }
+export default {
+  name: 'main-app'
+}
 </script>
-
-<style lang="scss" scoped>
-
-</style>

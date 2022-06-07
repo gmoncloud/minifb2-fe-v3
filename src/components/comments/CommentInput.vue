@@ -17,12 +17,15 @@
 
 <script>
 import CommentService from "@/services/comment.service";
+import {createToaster} from "@meforma/vue-toaster"
+
+const toaster = createToaster({ /* options */})
 export default {
   name: 'CommentInput',
   props: {
     postId: Number,
   },
-  data(){
+  data() {
     return {
       comment: {
         user_id: parseInt(localStorage.id),
@@ -35,11 +38,13 @@ export default {
     async commentPost() {
       const data = this.comment;
       await CommentService.create(data).then((response) => {
-        this.comment.comment_text = '';
-        this.$emit('loadPosts');
-        console.log(response.data)
+        this.comment.comment_text = ''
+        if(response.data){
+          this.$emit('loadUserPosts')
+        }
       }).catch((error) => {
-        console.log(error);
+        this.message = (error.response && error.response.data && error.response.data.message) || error.message;
+        toaster.show(this.message)
       })
     },
   }

@@ -7,7 +7,8 @@
             <input type="file" class="form-control" ref="fileupload" @change="onChange">
           </div>
           <div class="input-group">
-            <textarea v-model="post.writtenText" name="written_text" class="comment float-start form-control" placeholder="Whats on your mind"></textarea>
+            <textarea v-model="post.writtenText" name="written_text" class="comment float-start form-control"
+                      placeholder="Whats on your mind"></textarea>
             <span class="input-group-append">
               <button type="submit" class="btn btn-primary">Post</button>
             </span>
@@ -20,6 +21,9 @@
 
 <script>
 import PostService from "@/services/post.service";
+import {createToaster} from "@meforma/vue-toaster"
+
+const toaster = createToaster({ /* options */})
 export default {
   name: 'PostInput',
   data() {
@@ -46,12 +50,12 @@ export default {
       data.append('written_text', this.post.writtenText);
       data.append('post_image', this.file);
 
-      await PostService.create(data).then((response) => {
+      await PostService.create(data).then(() => {
         this.clearForm();
         this.$emit('loadPosts');
-        console.log(response)
       }).catch((error) => {
-        console.log(error);
+        this.message = (error.response && error.response.data && error.response.data.message) || error.message
+        toaster.show(this.message)
       })
     },
   }
