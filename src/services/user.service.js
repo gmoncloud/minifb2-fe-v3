@@ -1,20 +1,16 @@
 import Axios from 'axios'
+import HttpCommon from "@/common/http-common"
 
 const RESOURCE_NAME_LOGIN = process.env.VUE_APP_ROOT_API + '/v1/login'
 const RESOURCE_NAME_REGISTER = process.env.VUE_APP_ROOT_API + '/v1/register'
-const OPTIONS = {
-    headers: {
-        'Content-Type': 'application/json'
-    }
-}
 
 export default {
     login(data) {
-        return Axios.post(RESOURCE_NAME_LOGIN, data, OPTIONS);
+        return Axios.post(RESOURCE_NAME_LOGIN, data, HttpCommon.setHeaders())
     },
 
     register(data) {
-        return Axios.post(RESOURCE_NAME_REGISTER, data, OPTIONS);
+        return Axios.post(RESOURCE_NAME_REGISTER, data, HttpCommon.setHeaders())
     },
 
     getAvatar(username) {

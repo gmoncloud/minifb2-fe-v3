@@ -82,14 +82,14 @@ export default {
         localStorage.setItem("id", res.data.user.id);
         localStorage.setItem("username", res.data.user.name);
         localStorage.setItem("access_token", res.data.access_token);
-        this.$router.push({name: 'Dashboard', params: {id: res.data.user.id}}).go()
-        this.isSuccessfulRequest = true;
+        this.$router.push({name: 'Dashboard'});
 
       }).catch((error) => {
-        if (error.response.status == 422) {
-          this.errors = error.response.data.errors
-        }
+        // if (error.response.status == 422) {
+        //   this.errors = error.response.data.errors
+        // }
 
+        console.log("error", error)
         this.message = (error.response && error.response.data && error.response.data.message) || error.message;
         this.isSuccessfulRequest = false;
         toaster.show(this.message);

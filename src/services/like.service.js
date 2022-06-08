@@ -1,15 +1,10 @@
 import Axios from 'axios'
+import HttpCommon from "@/common/http-common"
 
 const RESOURCE_NAME = process.env.VUE_APP_ROOT_API + '/v1/like'
-const OPTIONS = {
-    headers: {
-        'Content-Type': 'multipart/form-data',
-        'Authorization': 'Bearer ' + localStorage.access_token
-    }
-}
 
 export default {
     likePost(data) {
-        return Axios.post(RESOURCE_NAME, data, OPTIONS);
+        return Axios.post(RESOURCE_NAME, data, HttpCommon.setHeaders())
     }
 }

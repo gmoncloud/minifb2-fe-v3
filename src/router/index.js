@@ -4,10 +4,11 @@ const routes = [
     {
         path: "/",
         name: "Dashboard",
+        redirect: "profile",
         component: import("@/components/layout/Dashboard"),
         children: [
             {
-                path: "/",
+                path: "/profile",
                 name: "Profile",
                 component: import("@/components/profile/ProfilePost.vue"),
             },
